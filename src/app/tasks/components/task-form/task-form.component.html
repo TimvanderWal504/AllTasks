@@ -1,0 +1,124 @@
+<div class="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-lg mx-4 p-6">
+
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">New task</h2>
+      <button
+        type="button"
+        (click)="closeDialog()"
+        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+        aria-label="Close dialog"
+      >
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <form [formGroup]="taskForm" (ngSubmit)="submitForm()" novalidate>
+
+      <!-- Title -->
+      <div class="mb-4">
+        <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Title <span class="text-red-500">*</span>
+        </label>
+        <input
+          id="title"
+          type="text"
+          formControlName="title"
+          maxlength="200"
+          placeholder="What needs to be done?"
+          class="w-full rounded-lg border px-3 py-2 text-sm text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          [class.border-red-500]="isTitleInvalid"
+          [class.border-gray-300]="!isTitleInvalid"
+          aria-describedby="title-error"
+        />
+        <p
+          id="title-error"
+          *ngIf="isTitleInvalid"
+          class="mt-1 text-xs text-red-500"
+          role="alert"
+        >
+          <ng-container *ngIf="taskForm.get('title')?.hasError('required')">Title is required.</ng-container>
+          <ng-container *ngIf="taskForm.get('title')?.hasError('maxlength')">Title may not exceed 200 characters.</ng-container>
+        </p>
+      </div>
+
+      <!-- Description -->
+      <div class="mb-4">
+        <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Description
+        </label>
+        <textarea
+          id="description"
+          formControlName="description"
+          rows="3"
+          maxlength="2000"
+          placeholder="Add more details (optional)"
+          class="w-full rounded-lg border px-3 py-2 text-sm text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+          [class.border-red-500]="isDescriptionInvalid"
+          [class.border-gray-300]="!isDescriptionInvalid"
+          aria-describedby="description-error"
+        ></textarea>
+        <p
+          id="description-error"
+          *ngIf="isDescriptionInvalid"
+          class="mt-1 text-xs text-red-500"
+          role="alert"
+        >
+          Description may not exceed 2000 characters.
+        </p>
+      </div>
+
+      <!-- Deadline -->
+      <div class="mb-4">
+        <label for="deadline" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Deadline
+        </label>
+        <input
+          id="deadline"
+          type="date"
+          formControlName="deadline"
+          class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <!-- Priority -->
+      <fieldset class="mb-6 border-0 p-0 m-0">
+        <legend class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Priority</legend>
+        <div class="flex gap-3">
+          <label
+            *ngFor="let priority of priorities"
+            class="flex items-center gap-1.5 cursor-pointer"
+          >
+            <input
+              type="radio"
+              formControlName="priority"
+              [value]="priority"
+              class="accent-blue-500"
+            />
+            <span class="text-sm capitalize text-gray-700 dark:text-gray-300">{{ priority }}</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Actions -->
+      <div class="flex justify-end gap-3">
+        <button
+          type="button"
+          (click)="closeDialog()"
+          class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          Save task
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
