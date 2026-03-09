@@ -1,0 +1,105 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+  <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Create an account</h1>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+
+      <!-- Email -->
+      <div class="mb-4">
+        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Email address
+        </label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="you@example.com"
+          autocomplete="email"
+        />
+        @if (registerForm.controls['email'].invalid && registerForm.controls['email'].touched) {
+          <p class="mt-1 text-sm text-red-600 dark:text-red-400">
+            Please enter a valid email address.
+          </p>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="mb-4">
+        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Password
+        </label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="At least 8 characters, 1 uppercase, 1 digit"
+          autocomplete="new-password"
+        />
+        @if (registerForm.controls['password'].invalid && registerForm.controls['password'].touched) {
+          <p class="mt-1 text-sm text-red-600 dark:text-red-400">
+            @if (registerForm.controls['password'].hasError('required')) {
+              Password is required.
+            } @else if (registerForm.controls['password'].hasError('passwordStrength')) {
+              @if (registerForm.controls['password'].errors?.['passwordStrength']?.tooShort) {
+                Password must be at least 8 characters.
+              } @else if (registerForm.controls['password'].errors?.['passwordStrength']?.missingUppercase) {
+                Password must contain at least one uppercase letter.
+              } @else if (registerForm.controls['password'].errors?.['passwordStrength']?.missingDigit) {
+                Password must contain at least one digit.
+              }
+            }
+          </p>
+        }
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="mb-6">
+        <label for="confirmPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Confirm password
+        </label>
+        <input
+          id="confirmPassword"
+          type="password"
+          formControlName="confirmPassword"
+          class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="Repeat your password"
+          autocomplete="new-password"
+        />
+        @if (registerForm.hasError('passwordMismatch') && registerForm.controls['confirmPassword'].touched) {
+          <p class="mt-1 text-sm text-red-600 dark:text-red-400">
+            Passwords do not match.
+          </p>
+        }
+      </div>
+
+      <!-- Server errors -->
+      @if (isEmailAlreadyInUse()) {
+        <p class="mb-4 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-lg px-4 py-2">
+          This email address is already registered. Please log in or use a different email.
+        </p>
+      }
+
+      @if (hasServerError()) {
+        <p class="mb-4 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-lg px-4 py-2">
+          An unexpected error occurred. Please try again later.
+        </p>
+      }
+
+      <!-- Submit -->
+      <button
+        type="submit"
+        [disabled]="isSubmitting()"
+        class="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-semibold rounded-lg px-4 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+      >
+        @if (isSubmitting()) {
+          Creating account…
+        } @else {
+          Create account
+        }
+      </button>
+
+    </form>
+  </div>
+</div>
