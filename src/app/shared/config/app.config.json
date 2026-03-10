@@ -1,0 +1,23 @@
+{
+  "api": {
+    "auth": {
+      "registerUrl": "/api/auth/register",
+      "loginUrl": "/api/auth/login"
+    }
+  },
+  "storage": {
+    "accessTokenKey": "accessToken",
+    "refreshTokenKey": "refreshToken"
+  },
+  "database": {
+    "name": "todo-pwa-db",
+    "version": 1,
+    "stores": {
+      "tasks": "tasks"
+    }
+  },
+  "serviceWorker": {
+    "scriptUrl": "ngsw-worker.js",
+    "registrationStrategy": "registerWhenStable:30000"
+  }
+}
