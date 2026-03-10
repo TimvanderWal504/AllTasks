@@ -5,6 +5,7 @@ import {
 } from '@angular/common/http/testing';
 import { AuthService } from './auth.service';
 import { AuthResponse, RegisterRequest } from '../models/auth.models';
+import { appConfig } from '../../shared/config/app.config';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -44,7 +45,7 @@ describe('AuthService', () => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne('/api/auth/register');
+      const req = httpMock.expectOne(appConfig.api.auth.registerUrl);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(request);
       req.flush(mockResponse);
@@ -63,7 +64,7 @@ describe('AuthService', () => {
         },
       });
 
-      const req = httpMock.expectOne('/api/auth/register');
+      const req = httpMock.expectOne(appConfig.api.auth.registerUrl);
       req.flush({ message: 'Email already in use' }, { status: 409, statusText: 'Conflict' });
       expect(errorReceived).toBeTrue();
     });
@@ -72,8 +73,8 @@ describe('AuthService', () => {
   describe('storeTokens', () => {
     it('should store the access token and refresh token in localStorage', () => {
       service.storeTokens(mockResponse);
-      expect(localStorage.getItem('accessToken')).toBe('mock-access-token');
-      expect(localStorage.getItem('refreshToken')).toBe('mock-refresh-token');
+      expect(localStorage.getItem(appConfig.storage.accessTokenKey)).toBe('mock-access-token');
+      expect(localStorage.getItem(appConfig.storage.refreshTokenKey)).toBe('mock-refresh-token');
     });
   });
 });
