@@ -1,9 +1,6 @@
 import { Injectable, signal, effect } from '@angular/core';
 import { Task, CreateTaskRequest } from '../models/task.models';
-
-const DB_NAME = 'todo-pwa-db';
-const DB_VERSION = 1;
-const STORE_NAME = 'tasks';
+import { appConfig } from '../../shared/config/app.config';
 
 @Injectable({ providedIn: 'root' })
 export class TaskService {
@@ -35,12 +32,12 @@ export class TaskService {
   }
 
   private persistTasksToIndexedDb(tasks: Task[]): void {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    const request = indexedDB.open(appConfig.database.name, appConfig.database.version);
 
     request.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+      if (!db.objectStoreNames.contains(appConfig.database.stores.tasks)) {
+        db.createObjectStore(appConfig.database.stores.tasks, { keyPath: 'id' });
       }
     };
 
@@ -51,8 +48,8 @@ export class TaskService {
   }
 
   private writeTasksToStore(db: IDBDatabase, tasks: Task[]): void {
-    const transaction = db.transaction(STORE_NAME, 'readwrite');
-    const store = transaction.objectStore(STORE_NAME);
+    const transaction = db.transaction(appConfig.database.stores.tasks, 'readwrite');
+    const store = transaction.objectStore(appConfig.database.stores.tasks);
     tasks.forEach((task) => store.put(task));
   }
 }
