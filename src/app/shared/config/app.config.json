@@ -2,7 +2,9 @@
   "api": {
     "auth": {
       "registerUrl": "/api/auth/register",
-      "loginUrl": "/api/auth/login"
+      "loginUrl": "/api/auth/login",
+      "requestPasswordResetUrl": "/api/auth/request-password-reset",
+      "resetPasswordUrl": "/api/auth/reset-password"
     }
   },
   "storage": {
