@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Dialog } from '@angular/cdk/dialog';
 import { TaskService } from '../../services/task.service';
 import { Task } from '../../models/task.models';
+import { TaskItemComponent } from '../task-item/task-item.component';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TaskItemComponent],
   templateUrl: './task-list.component.html',
 })
 export class TaskListComponent {
@@ -24,5 +25,9 @@ export class TaskListComponent {
         panelClass: 'task-dialog-panel',
       });
     });
+  }
+
+  onToggleComplete(task: Task): void {
+    this.taskService.toggleComplete(task);
   }
 }

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { TaskService } from './task.service';
-import { CreateTaskRequest } from '../models/task.models';
+import { CreateTaskRequest, Task } from '../models/task.models';
 
 describe('TaskService', () => {
   let service: TaskService;
@@ -105,6 +105,60 @@ describe('TaskService', () => {
       service.createTask(mockRequest);
       service.createTask({ ...mockRequest, title: 'Task 2' });
       expect(service.tasks().length).toBe(2);
+    });
+  });
+
+  describe('toggleComplete', () => {
+    let existingTask: Task;
+
+    beforeEach(() => {
+      service.createTask(mockRequest);
+      existingTask = service.tasks()[service.tasks().length - 1];
+    });
+
+    it('should mark an open task as completed when toggleComplete is called', () => {
+      service.toggleComplete(existingTask);
+      const updated = service.tasks().find((t) => t.id === existingTask.id)!;
+      expect(updated.isCompleted).toBeTrue();
+    });
+
+    it('should mark a completed task as open again when toggleComplete is called a second time', () => {
+      service.toggleComplete(existingTask);
+      const afterFirstToggle = service.tasks().find((t) => t.id === existingTask.id)!;
+      service.toggleComplete(afterFirstToggle);
+      const afterSecondToggle = service.tasks().find((t) => t.id === existingTask.id)!;
+      expect(afterSecondToggle.isCompleted).toBeFalse();
+    });
+
+    it('should not mutate the original task object — signal update is immutable', () => {
+      const snapshotBefore = service.tasks();
+      service.toggleComplete(existingTask);
+      expect(service.tasks()).not.toBe(snapshotBefore);
+    });
+
+    it('should leave all other tasks unchanged when one task is toggled', () => {
+      service.createTask({ ...mockRequest, title: 'Other task' });
+      const otherTask = service.tasks().find((t) => t.title === 'Other task')!;
+      service.toggleComplete(existingTask);
+      const otherAfterToggle = service.tasks().find((t) => t.id === otherTask.id)!;
+      expect(otherAfterToggle.isCompleted).toBeFalse();
+    });
+
+    it('should set syncStatus to pending after toggling completion', () => {
+      service.toggleComplete(existingTask);
+      const updated = service.tasks().find((t) => t.id === existingTask.id)!;
+      expect(updated.syncStatus).toBe('pending');
+    });
+
+    it('should not change any other task properties when toggling completion', () => {
+      service.toggleComplete(existingTask);
+      const updated = service.tasks().find((t) => t.id === existingTask.id)!;
+      expect(updated.title).toBe(existingTask.title);
+      expect(updated.description).toBe(existingTask.description);
+      expect(updated.deadline).toBe(existingTask.deadline);
+      expect(updated.priority).toBe(existingTask.priority);
+      expect(updated.listId).toBe(existingTask.listId);
+      expect(updated.createdAt).toBe(existingTask.createdAt);
     });
   });
 });

@@ -17,6 +17,16 @@ export class TaskService {
     this.tasks.update((current) => [...current, newTask]);
   }
 
+  toggleComplete(task: Task): void {
+    this.tasks.update((current) =>
+      current.map((t) => (t.id === task.id ? this.buildToggledTask(t) : t)),
+    );
+  }
+
+  private buildToggledTask(task: Task): Task {
+    return { ...task, isCompleted: !task.isCompleted, syncStatus: 'pending' };
+  }
+
   private buildTask(request: CreateTaskRequest): Task {
     return {
       id: crypto.randomUUID(),

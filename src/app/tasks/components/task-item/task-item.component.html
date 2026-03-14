@@ -1,0 +1,50 @@
+<li class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+  <input
+    type="checkbox"
+    data-testid="task-checkbox"
+    [checked]="task.isCompleted"
+    (change)="onCheckboxChange()"
+    class="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+    [attr.aria-label]="'Mark ' + task.title + ' as ' + (task.isCompleted ? 'open' : 'completed')"
+  />
+
+  <div class="flex-1 min-w-0">
+    <p
+      data-testid="task-title"
+      class="text-sm font-medium text-gray-900 dark:text-white truncate"
+      [class.line-through]="task.isCompleted"
+      [class.text-gray-400]="task.isCompleted"
+      [class.opacity-60]="task.isCompleted"
+    >{{ task.title }}</p>
+
+    <p *ngIf="task.description" class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">
+      {{ task.description }}
+    </p>
+
+    <div class="flex items-center gap-2 mt-1">
+      <span
+        *ngIf="task.deadline"
+        data-testid="task-deadline"
+        class="text-xs text-gray-400 dark:text-gray-500"
+      >{{ task.deadline }}</span>
+
+      <span
+        data-testid="task-priority"
+        class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium"
+        [class.bg-red-100]="task.priority === 'high'"
+        [class.text-red-700]="task.priority === 'high'"
+        [class.bg-yellow-100]="task.priority === 'medium'"
+        [class.text-yellow-700]="task.priority === 'medium'"
+        [class.bg-gray-100]="task.priority === 'low'"
+        [class.text-gray-600]="task.priority === 'low'"
+      >{{ task.priority }}</span>
+
+      <span
+        *ngIf="task.syncStatus === 'pending'"
+        data-testid="task-sync-pending"
+        class="text-xs text-orange-400"
+        title="Pending sync"
+      >offline</span>
+    </div>
+  </div>
+</li>
