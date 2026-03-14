@@ -39,7 +39,7 @@ describe('TaskListComponent', () => {
 
   beforeEach(async () => {
     const tasksSignal = signal<Task[]>(mockTasks);
-    taskServiceSpy = jasmine.createSpyObj('TaskService', ['createTask'], {
+    taskServiceSpy = jasmine.createSpyObj('TaskService', ['createTask', 'toggleComplete'], {
       tasks: tasksSignal,
     });
     dialogSpy = jasmine.createSpyObj('Dialog', ['open']);
@@ -81,6 +81,13 @@ describe('TaskListComponent', () => {
       const { TaskFormComponent } = await import('../task-form/task-form.component');
       await component.openCreateTaskDialog();
       expect(dialogSpy.open).toHaveBeenCalledWith(TaskFormComponent, jasmine.any(Object));
+    });
+  });
+
+  describe('onToggleComplete', () => {
+    it('should call toggleComplete on the task service with the given task', () => {
+      component.onToggleComplete(mockTasks[0]);
+      expect(taskServiceSpy.toggleComplete).toHaveBeenCalledWith(mockTasks[0]);
     });
   });
 });

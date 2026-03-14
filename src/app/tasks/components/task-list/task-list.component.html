@@ -37,37 +37,11 @@
 
   <!-- Task list -->
   <ul *ngIf="tasks().length > 0" class="divide-y divide-gray-100 dark:divide-gray-700 overflow-y-auto flex-1">
-    <li
+    <app-task-item
       *ngFor="let task of tasks()"
-      class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-    >
-      <div class="flex-1 min-w-0">
-        <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ task.title }}</p>
-        <p *ngIf="task.description" class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">
-          {{ task.description }}
-        </p>
-        <div class="flex items-center gap-2 mt-1">
-          <span
-            *ngIf="task.deadline"
-            class="text-xs text-gray-400 dark:text-gray-500"
-          >{{ task.deadline }}</span>
-          <span
-            class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium"
-            [class.bg-red-100]="task.priority === 'high'"
-            [class.text-red-700]="task.priority === 'high'"
-            [class.bg-yellow-100]="task.priority === 'medium'"
-            [class.text-yellow-700]="task.priority === 'medium'"
-            [class.bg-gray-100]="task.priority === 'low'"
-            [class.text-gray-600]="task.priority === 'low'"
-          >{{ task.priority }}</span>
-          <span
-            *ngIf="task.syncStatus === 'pending'"
-            class="text-xs text-orange-400"
-            title="Pending sync"
-          >offline</span>
-        </div>
-      </div>
-    </li>
+      [task]="task"
+      (toggleComplete)="onToggleComplete($event)"
+    ></app-task-item>
   </ul>
 
 </div>
