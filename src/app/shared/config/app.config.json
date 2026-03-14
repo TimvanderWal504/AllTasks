@@ -9,7 +9,8 @@
   },
   "storage": {
     "accessTokenKey": "accessToken",
-    "refreshTokenKey": "refreshToken"
+    "refreshTokenKey": "refreshToken",
+    "themeKey": "theme"
   },
   "database": {
     "name": "todo-pwa-db",
