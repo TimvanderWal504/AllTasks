@@ -20,4 +20,12 @@ export class AuthService {
     localStorage.setItem(appConfig.storage.accessTokenKey, response.accessToken);
     localStorage.setItem(appConfig.storage.refreshTokenKey, response.refreshToken);
   }
+
+  requestPasswordReset(emailAddress: string): Observable<void> {
+    return this.http.post<void>(appConfig.api.auth.requestPasswordResetUrl, { emailAddress });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<void> {
+    return this.http.post<void>(appConfig.api.auth.resetPasswordUrl, { token, newPassword });
+  }
 }

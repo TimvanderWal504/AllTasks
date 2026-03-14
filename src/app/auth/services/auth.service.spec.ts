@@ -150,4 +150,70 @@ describe('AuthService', () => {
       expect(errorStatus).toBe(423);
     });
   });
+
+  describe('requestPasswordReset', () => {
+    it('should send a POST request to the request-password-reset endpoint', () => {
+      service.requestPasswordReset('user@example.com').subscribe();
+
+      const req = httpMock.expectOne(appConfig.api.auth.requestPasswordResetUrl);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ emailAddress: 'user@example.com' });
+      req.flush(null);
+    });
+
+    it('should complete successfully for an unknown email address (neutral response)', () => {
+      let completed = false;
+      service.requestPasswordReset('unknown@example.com').subscribe({
+        complete: () => { completed = true; },
+      });
+
+      const req = httpMock.expectOne(appConfig.api.auth.requestPasswordResetUrl);
+      req.flush(null);
+      expect(completed).toBeTrue();
+    });
+
+    it('should propagate HTTP errors to the caller', () => {
+      let errorReceived = false;
+      service.requestPasswordReset('user@example.com').subscribe({
+        error: () => { errorReceived = true; },
+      });
+
+      const req = httpMock.expectOne(appConfig.api.auth.requestPasswordResetUrl);
+      req.flush({ message: 'Server error' }, { status: 500, statusText: 'Internal Server Error' });
+      expect(errorReceived).toBeTrue();
+    });
+  });
+
+  describe('resetPassword', () => {
+    it('should send a POST request to the reset-password endpoint with the token and new password', () => {
+      service.resetPassword('valid-token', 'NewPassword1').subscribe();
+
+      const req = httpMock.expectOne(appConfig.api.auth.resetPasswordUrl);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ token: 'valid-token', newPassword: 'NewPassword1' });
+      req.flush(null);
+    });
+
+    it('should complete successfully when the token is valid', () => {
+      let completed = false;
+      service.resetPassword('valid-token', 'NewPassword1').subscribe({
+        complete: () => { completed = true; },
+      });
+
+      const req = httpMock.expectOne(appConfig.api.auth.resetPasswordUrl);
+      req.flush(null);
+      expect(completed).toBeTrue();
+    });
+
+    it('should propagate a 400 error to the caller when the token is expired or invalid', () => {
+      let errorStatus: number | undefined;
+      service.resetPassword('expired-token', 'NewPassword1').subscribe({
+        error: (err) => { errorStatus = err.status; },
+      });
+
+      const req = httpMock.expectOne(appConfig.api.auth.resetPasswordUrl);
+      req.flush({ message: 'Token expired' }, { status: 400, statusText: 'Bad Request' });
+      expect(errorStatus).toBe(400);
+    });
+  });
 });
