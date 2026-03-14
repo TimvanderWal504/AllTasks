@@ -1,5 +1,4 @@
 import { Component, inject, Signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Dialog } from '@angular/cdk/dialog';
 import { TaskService } from '../../services/task.service';
 import { Task } from '../../models/task.models';
@@ -9,7 +8,7 @@ import { TaskFilterComponent } from '../task-filter/task-filter.component';
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, TaskItemComponent, TaskFilterComponent],
+  imports: [TaskItemComponent, TaskFilterComponent],
   templateUrl: './task-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

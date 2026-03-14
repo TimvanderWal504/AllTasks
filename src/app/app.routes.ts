@@ -51,6 +51,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'settings',
+        loadComponent: () =>
+          import('./ui/settings/settings-page.component').then(
+            (m) => m.SettingsPageComponent
+          ),
+      },
+      {
         path: '',
         redirectTo: 'tasks',
         pathMatch: 'full',

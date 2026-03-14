@@ -20,31 +20,35 @@
   <app-task-filter></app-task-filter>
 
   <!-- Empty state -->
-  <div
-    *ngIf="tasks().length === 0"
-    class="flex flex-col items-center justify-center flex-1 gap-4 py-16 text-center"
-  >
-    <svg class="w-12 h-12 text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-    </svg>
-    <p class="text-sm text-gray-500 dark:text-gray-400">No tasks yet. Create your first task!</p>
-    <button
-      type="button"
-      (click)="openCreateTaskDialog()"
-      class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+  @if (tasks().length === 0) {
+    <div
+      class="flex flex-col items-center justify-center flex-1 gap-4 py-16 text-center"
     >
-      New task
-    </button>
-  </div>
+      <svg class="w-12 h-12 text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      </svg>
+      <p class="text-sm text-gray-500 dark:text-gray-400">No tasks yet. Create your first task!</p>
+      <button
+        type="button"
+        (click)="openCreateTaskDialog()"
+        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+      >
+        New task
+      </button>
+    </div>
+  }
 
   <!-- Task list -->
-  <ul *ngIf="tasks().length > 0" class="divide-y divide-gray-100 dark:divide-gray-700 overflow-y-auto flex-1">
-    <app-task-item
-      *ngFor="let task of tasks()"
-      [task]="task"
-      (toggleComplete)="onToggleComplete($event)"
-    ></app-task-item>
-  </ul>
+  @if (tasks().length > 0) {
+    <ul class="divide-y divide-gray-100 dark:divide-gray-700 overflow-y-auto flex-1">
+      @for (task of tasks(); track task.id) {
+        <app-task-item
+          [task]="task"
+          (toggleComplete)="onToggleComplete($event)"
+        ></app-task-item>
+      }
+    </ul>
+  }
 
 </div>
