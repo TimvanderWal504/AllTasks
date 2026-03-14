@@ -19,5 +19,8 @@
   "serviceWorker": {
     "scriptUrl": "ngsw-worker.js",
     "registrationStrategy": "registerWhenStable:30000"
+  },
+  "sync": {
+    "defaultTag": "sync-tasks"
   }
 }
