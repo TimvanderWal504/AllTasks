@@ -4,7 +4,7 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { AuthService } from './auth.service';
-import { AuthResponse, RegisterRequest } from '../models/auth.models';
+import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth.models';
 import { appConfig } from '../../shared/config/app.config';
 
 describe('AuthService', () => {
@@ -28,6 +28,7 @@ describe('AuthService', () => {
 
   afterEach(() => {
     httpMock.verify();
+    localStorage.clear();
   });
 
   it('should be created', () => {
@@ -75,6 +76,78 @@ describe('AuthService', () => {
       service.storeTokens(mockResponse);
       expect(localStorage.getItem(appConfig.storage.accessTokenKey)).toBe('mock-access-token');
       expect(localStorage.getItem(appConfig.storage.refreshTokenKey)).toBe('mock-refresh-token');
+    });
+  });
+
+  describe('login', () => {
+    it('should send a POST request to the login endpoint with the provided credentials', () => {
+      const request: LoginRequest = {
+        email: 'user@example.com',
+        password: 'Password1',
+        rememberMe: false,
+      };
+
+      service.login(request).subscribe();
+
+      const req = httpMock.expectOne(appConfig.api.auth.loginUrl);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(request);
+      req.flush(mockResponse);
+    });
+
+    it('should return the AuthResponse on a successful login', () => {
+      const request: LoginRequest = {
+        email: 'user@example.com',
+        password: 'Password1',
+        rememberMe: false,
+      };
+
+      let result: AuthResponse | undefined;
+      service.login(request).subscribe((response) => {
+        result = response;
+      });
+
+      const req = httpMock.expectOne(appConfig.api.auth.loginUrl);
+      req.flush(mockResponse);
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('should propagate a 401 error to the caller when credentials are invalid', () => {
+      const request: LoginRequest = {
+        email: 'user@example.com',
+        password: 'WrongPassword1',
+        rememberMe: false,
+      };
+
+      let errorStatus: number | undefined;
+      service.login(request).subscribe({
+        error: (err) => {
+          errorStatus = err.status;
+        },
+      });
+
+      const req = httpMock.expectOne(appConfig.api.auth.loginUrl);
+      req.flush({ message: 'Invalid credentials' }, { status: 401, statusText: 'Unauthorized' });
+      expect(errorStatus).toBe(401);
+    });
+
+    it('should propagate a 423 error to the caller when the account is locked', () => {
+      const request: LoginRequest = {
+        email: 'locked@example.com',
+        password: 'Password1',
+        rememberMe: false,
+      };
+
+      let errorStatus: number | undefined;
+      service.login(request).subscribe({
+        error: (err) => {
+          errorStatus = err.status;
+        },
+      });
+
+      const req = httpMock.expectOne(appConfig.api.auth.loginUrl);
+      req.flush({ message: 'Account locked' }, { status: 423, statusText: 'Locked' });
+      expect(errorStatus).toBe(423);
     });
   });
 });
