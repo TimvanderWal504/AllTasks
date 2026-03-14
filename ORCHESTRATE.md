@@ -202,6 +202,22 @@ Spawn 3 subagents in parallel after Round 7 is fully merged.
 
 The `src/app/shared/` folder is read by all agents but written to carefully.
 
+### Centralised configuration (already on `main`)
+
+A shared config is available at `src/app/shared/config/`.
+All subagents **must** use it instead of hardcoding constants.
+
+| File | Purpose |
+|---|---|
+| `app.config.json` | All config values (API URLs, storage keys, DB settings, SW settings) |
+| `app.config.ts` | Typed TypeScript loader — `import appConfig from './app.config'` |
+
+When a subagent needs a value that isn't in the config yet, it must:
+1. Add the key to `app.config.json` on its feature branch
+2. Note the addition in its PR description so the key can be ported to `main`
+
+### Conflict resolution
+
 If two agents in the same round need to add something to `shared/`:
 1. Pause both agents before they write to `shared/`
 2. Report the conflict to the user: which agents, which files

@@ -41,6 +41,49 @@ service contracts and architectural decisions.
 
 ---
 
+## Shared configuration
+
+All hardcoded constants (API URLs, localStorage keys, database names, service worker settings)
+**must** be read from the centralised config — never inlined in source files.
+
+| File | Purpose |
+|---|---|
+| `src/app/shared/config/app.config.json` | Single source of truth for all config values |
+| `src/app/shared/config/app.config.ts` | Typed TypeScript loader — import `appConfig` from here |
+
+### Current config keys
+
+```json
+{
+  "api": {
+    "auth": {
+      "registerUrl": "/api/auth/register",
+      "loginUrl": "/api/auth/login"
+    }
+  },
+  "storage": {
+    "accessTokenKey": "accessToken",
+    "refreshTokenKey": "refreshToken"
+  },
+  "database": {
+    "name": "todo-pwa-db",
+    "version": 1,
+    "stores": {
+      "tasks": "tasks"
+    }
+  },
+  "serviceWorker": {
+    "scriptUrl": "ngsw-worker.js",
+    "registrationStrategy": "registerWhenStable:30000"
+  }
+}
+```
+
+Before adding a new key, check whether a similar one already exists.
+When adding new keys, update both `app.config.json` and the table above.
+
+---
+
 ## Workflow — mandatory for every story
 
 ### 1. Read before you write
