@@ -1,0 +1,95 @@
+name: Claude PR Review — AllTask Angular PWA
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  # ── Job 1: Auto-review on PR open / push ──────────────────────────────────
+  auto-review:
+    name: Auto Review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Claude PR Review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          model: claude-sonnet-4-6
+          direct_prompt: |
+            You are an elite senior Angular architect reviewing PRs for the AllTask Angular PWA.
+            Read the CLAUDE.md in the repository root — it is your single source of truth.
+
+            Review this pull request and produce a structured report using exactly this format:
+
+            ## Summary
+            2–3 sentence verdict + overall risk level (Low / Medium / High / Critical).
+
+            ## Blockers
+            Must-fix before merge. For each issue: what it is, why it matters, concrete Angular fix with code.
+
+            ## Improvements
+            Strong suggestions with before/after Angular-idiomatic code snippets.
+
+            ## Nitpicks
+            Optional polish — lint rules, naming conventions, small readability wins.
+
+            ## Praise
+            What was done well. Always include at least one genuine compliment.
+
+            ## CLAUDE.md compliance
+            Explicitly pass or fail each Definition of Done item from CLAUDE.md.
+            Check: branch naming, folder ownership, TDD (spec file present), no methods > 20 lines,
+            no nesting > 2 levels, booleans prefixed correctly, ESLint clean, Jira key in PR description.
+
+            ## Verdict
+            ✅ APPROVE  |  ❌ REQUEST CHANGES  |  💬 NEEDS DISCUSSION
+            One sentence explaining the verdict.
+
+            Hard rules — never approve if any of these are unresolved:
+            - Security vulnerability (XSS, exposed secret, bypassSecurityTrust* abuse)
+            - RxJS memory leak (manual .subscribe() without takeUntilDestroyed or async pipe)
+            - Offline regression in ngsw-config.json
+            - Missing .spec.ts for any production file
+            - ChangeDetectionStrategy not set to OnPush on new components
+            - Deprecated Angular APIs used (ComponentFactoryResolver, old NgModule patterns)
+
+  # ── Job 2: On-demand review via @claude mention in PR comment ────────────
+  on-demand-review:
+    name: On-demand Review (@claude)
+    if: |
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request != null &&
+      contains(github.event.comment.body, '@claude')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Claude on comment
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          model: claude-sonnet-4-6
+          # Passes the full comment to Claude so it can answer targeted questions
+          # e.g. "@claude check the ngsw-config" or "@claude is this RxJS safe?"
