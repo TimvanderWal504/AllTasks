@@ -1,10 +1,19 @@
-import { Injectable, signal, effect } from '@angular/core';
+import { Injectable, signal, computed, effect, inject } from '@angular/core';
 import { Task, CreateTaskRequest } from '../models/task.models';
 import { appConfig } from '../../shared/config/app.config';
+import { TaskFilterService } from './task-filter.service';
 
 @Injectable({ providedIn: 'root' })
 export class TaskService {
+  private readonly taskFilterService = inject(TaskFilterService);
+
   readonly tasks = signal<Task[]>([]);
+
+  readonly filteredTasks = computed(() => {
+    const state = this.taskFilterService.filterState();
+    const filtered = this.taskFilterService.applyFilter(this.tasks(), state);
+    return this.taskFilterService.applySort(filtered, state);
+  });
 
   constructor() {
     effect(() => {

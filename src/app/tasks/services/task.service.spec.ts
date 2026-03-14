@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { TaskService } from './task.service';
+import { TaskFilterService } from './task-filter.service';
 import { CreateTaskRequest, Task } from '../models/task.models';
 
 describe('TaskService', () => {
@@ -13,7 +14,7 @@ describe('TaskService', () => {
   };
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [TaskService] });
+    TestBed.configureTestingModule({ providers: [TaskService, TaskFilterService] });
     service = TestBed.inject(TaskService);
 
     spyOn(window.indexedDB, 'open').and.callFake(() => {
@@ -159,6 +160,56 @@ describe('TaskService', () => {
       expect(updated.priority).toBe(existingTask.priority);
       expect(updated.listId).toBe(existingTask.listId);
       expect(updated.createdAt).toBe(existingTask.createdAt);
+    });
+  });
+
+  describe('filteredTasks', () => {
+    let filterService: TaskFilterService;
+
+    beforeEach(() => {
+      filterService = TestBed.inject(TaskFilterService);
+    });
+
+    it('should return all tasks when the filter status is "all"', () => {
+      service.createTask(mockRequest);
+      service.createTask({ ...mockRequest, title: 'Second task' });
+      filterService.setStatus('all');
+      expect(service.filteredTasks().length).toBe(service.tasks().length);
+    });
+
+    it('should return only open tasks when the filter status is "open"', () => {
+      service.createTask(mockRequest);
+      const task = service.tasks()[service.tasks().length - 1];
+      service.toggleComplete(task);
+      service.createTask({ ...mockRequest, title: 'Open task' });
+      filterService.setStatus('open');
+      expect(service.filteredTasks().every((t) => !t.isCompleted)).toBeTrue();
+    });
+
+    it('should return only completed tasks when the filter status is "completed"', () => {
+      service.createTask(mockRequest);
+      const task = service.tasks()[service.tasks().length - 1];
+      service.toggleComplete(task);
+      service.createTask({ ...mockRequest, title: 'Still open' });
+      filterService.setStatus('completed');
+      expect(service.filteredTasks().every((t) => t.isCompleted)).toBeTrue();
+    });
+
+    it('should return tasks matching the search term when a search is applied', () => {
+      service.createTask(mockRequest);
+      service.createTask({ ...mockRequest, title: 'Unrelated task', description: '' });
+      filterService.setSearch('groceries');
+      expect(service.filteredTasks().length).toBe(1);
+      expect(service.filteredTasks()[0].title).toBe('Buy groceries');
+    });
+
+    it('should sort tasks by priority when the sort field is "priority"', () => {
+      service.createTask({ ...mockRequest, priority: 'low' });
+      service.createTask({ ...mockRequest, title: 'High task', priority: 'high' });
+      filterService.setStatus('all');
+      filterService.setSort('priority');
+      const result = service.filteredTasks();
+      expect(result[0].priority).toBe('high');
     });
   });
 });

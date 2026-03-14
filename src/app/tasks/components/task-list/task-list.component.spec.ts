@@ -1,10 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TaskListComponent } from './task-list.component';
 import { TaskService } from '../../services/task.service';
+import { TaskFilterService } from '../../services/task-filter.service';
 import { Dialog } from '@angular/cdk/dialog';
 import { signal } from '@angular/core';
 import { Task } from '../../models/task.models';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute, Router } from '@angular/router';
+import { of } from 'rxjs';
 
 describe('TaskListComponent', () => {
   let component: TaskListComponent;
@@ -38,17 +41,36 @@ describe('TaskListComponent', () => {
   ];
 
   beforeEach(async () => {
-    const tasksSignal = signal<Task[]>(mockTasks);
+    const filteredTasksSignal = signal<Task[]>(mockTasks);
     taskServiceSpy = jasmine.createSpyObj('TaskService', ['createTask', 'toggleComplete'], {
-      tasks: tasksSignal,
+      tasks: signal<Task[]>(mockTasks),
+      filteredTasks: filteredTasksSignal,
     });
     dialogSpy = jasmine.createSpyObj('Dialog', ['open']);
+
+    const filterServiceSpy = jasmine.createSpyObj(
+      'TaskFilterService',
+      ['setStatus', 'setSort', 'setSearch', 'applyFilter', 'applySort'],
+      { filterState: signal({ status: 'all', sort: 'createdAt', search: '' }) }
+    );
 
     await TestBed.configureTestingModule({
       imports: [TaskListComponent, NoopAnimationsModule],
       providers: [
         { provide: TaskService, useValue: taskServiceSpy },
+        { provide: TaskFilterService, useValue: filterServiceSpy },
         { provide: Dialog, useValue: dialogSpy },
+        {
+          provide: Router,
+          useValue: jasmine.createSpyObj('Router', ['navigate']),
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            queryParams: of({}),
+            snapshot: { queryParams: {} },
+          },
+        },
       ],
     }).compileComponents();
 
@@ -62,11 +84,11 @@ describe('TaskListComponent', () => {
   });
 
   describe('task list rendering', () => {
-    it('should display all tasks from the service', () => {
+    it('should display the filtered tasks from the service', () => {
       expect(component.tasks().length).toBe(2);
     });
 
-    it('should expose the tasks signal from the service', () => {
+    it('should expose the filteredTasks signal from the service', () => {
       expect(component.tasks()).toEqual(mockTasks);
     });
   });

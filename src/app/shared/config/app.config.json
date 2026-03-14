@@ -24,5 +24,14 @@
   },
   "sync": {
     "defaultTag": "sync-tasks"
+  },
+  "tasks": {
+    "filter": {
+      "defaultStatus": "all",
+      "defaultSort": "createdAt",
+      "queryParamStatus": "filter",
+      "queryParamSort": "sort",
+      "queryParamSearch": "search"
+    }
   }
 }
