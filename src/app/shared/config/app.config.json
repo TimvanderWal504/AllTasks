@@ -9,13 +9,15 @@
   },
   "storage": {
     "accessTokenKey": "accessToken",
-    "refreshTokenKey": "refreshToken"
+    "refreshTokenKey": "refreshToken",
+    "themeKey": "theme"
   },
   "database": {
     "name": "todo-pwa-db",
-    "version": 1,
+    "version": 2,
     "stores": {
-      "tasks": "tasks"
+      "tasks": "tasks",
+      "lists": "lists"
     }
   },
   "serviceWorker": {
