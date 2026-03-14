@@ -44,6 +44,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'lists',
+        loadComponent: () =>
+          import('./lists/components/lists-page/lists-page.component').then(
+            (m) => m.ListsPageComponent
+          ),
+      },
+      {
         path: '',
         redirectTo: 'tasks',
         pathMatch: 'full',
