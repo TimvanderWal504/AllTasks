@@ -16,8 +16,38 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./auth/components/forgot-password/forgot-password.component').then(
+        (m) => m.ForgotPasswordComponent
+      ),
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./auth/components/reset-password/reset-password.component').then(
+        (m) => m.ResetPasswordComponent
+      ),
+  },
+  {
     path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
+    loadComponent: () =>
+      import('./ui/app-layout/app-layout.component').then(
+        (m) => m.AppLayoutComponent
+      ),
+    children: [
+      {
+        path: 'tasks',
+        loadComponent: () =>
+          import('./tasks/components/task-list/task-list.component').then(
+            (m) => m.TaskListComponent
+          ),
+      },
+      {
+        path: '',
+        redirectTo: 'tasks',
+        pathMatch: 'full',
+      },
+    ],
   },
 ];
