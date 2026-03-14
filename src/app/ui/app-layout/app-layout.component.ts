@@ -2,16 +2,27 @@ import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { BreakpointService } from '../breakpoint/breakpoint.service';
 import { OfflineBannerComponent } from '../../pwa/offline-banner/offline-banner.component';
+import { ThemeToggleComponent } from '../theme/theme-toggle.component';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, OfflineBannerComponent],
+  imports: [RouterOutlet, RouterLink, OfflineBannerComponent, ThemeToggleComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-offline-banner />
 
     <div class="flex h-screen flex-col">
+      @if (isMobile()) {
+        <header
+          data-testid="mobile-header"
+          class="flex items-center justify-between px-4 py-2 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700"
+        >
+          <span class="text-sm font-semibold text-gray-700 dark:text-gray-200">AllTask</span>
+          <app-theme-toggle data-testid="theme-toggle-mobile" />
+        </header>
+      }
+
       <div class="flex flex-1 overflow-hidden">
         @if (isDesktop()) {
           <nav
@@ -44,6 +55,9 @@ import { OfflineBannerComponent } from '../../pwa/offline-banner/offline-banner.
                 <span aria-hidden="true">&#9881;</span>
                 <span>Instellingen</span>
               </a>
+              <div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                <app-theme-toggle data-testid="theme-toggle-desktop" />
+              </div>
             </div>
           </nav>
         }
