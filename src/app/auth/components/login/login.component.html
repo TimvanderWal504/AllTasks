@@ -1,42 +1,42 @@
-<div class="flex min-h-screen items-center justify-center bg-gray-50">
-  <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
-    <h1 class="text-2xl font-bold text-gray-800 mb-6">Inloggen</h1>
+<div class="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md">
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Inloggen</h1>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
 
       <!-- Email -->
       <div class="mb-4">
-        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           E-mailadres
         </label>
         <input
           id="email"
           type="email"
           formControlName="email"
-          class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white dark:placeholder-gray-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           [class.border-red-500]="loginForm.controls['email'].invalid && loginForm.controls['email'].touched"
           autocomplete="email"
         />
         @if (loginForm.controls['email'].invalid && loginForm.controls['email'].touched) {
-          <p class="text-red-600 text-sm mt-1">Vul een geldig e-mailadres in.</p>
+          <p class="text-red-600 dark:text-red-400 text-sm mt-1">Vul een geldig e-mailadres in.</p>
         }
       </div>
 
       <!-- Password -->
       <div class="mb-4">
-        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Wachtwoord
         </label>
         <input
           id="password"
           type="password"
           formControlName="password"
-          class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white dark:placeholder-gray-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           [class.border-red-500]="loginForm.controls['password'].invalid && loginForm.controls['password'].touched"
           autocomplete="current-password"
         />
         @if (loginForm.controls['password'].invalid && loginForm.controls['password'].touched) {
-          <p class="text-red-600 text-sm mt-1">Wachtwoord is verplicht.</p>
+          <p class="text-red-600 dark:text-red-400 text-sm mt-1">Wachtwoord is verplicht.</p>
         }
       </div>
 
@@ -48,24 +48,24 @@
           formControlName="rememberMe"
           class="h-4 w-4 text-blue-600 border-gray-300 rounded"
         />
-        <label for="rememberMe" class="text-sm text-gray-700">Onthoud mij</label>
+        <label for="rememberMe" class="text-sm text-gray-700 dark:text-gray-300">Onthoud mij</label>
       </div>
 
       <!-- Error messages -->
       @if (hasLoginError()) {
-        <p class="text-red-600 text-sm mb-4">
+        <p class="text-red-600 dark:text-red-400 text-sm mb-4">
           E-mailadres of wachtwoord is onjuist.
         </p>
       }
 
       @if (isAccountLocked()) {
-        <p class="text-red-600 text-sm mb-4">
+        <p class="text-red-600 dark:text-red-400 text-sm mb-4">
           Je account is tijdelijk geblokkeerd vanwege meerdere mislukte pogingen. Probeer het over 15 minuten opnieuw.
         </p>
       }
 
       @if (hasServerError()) {
-        <p class="text-red-600 text-sm mb-4">
+        <p class="text-red-600 dark:text-red-400 text-sm mb-4">
           Er is een serverfout opgetreden. Probeer het later opnieuw.
         </p>
       }
@@ -85,14 +85,14 @@
       </button>
 
       <!-- Link to register -->
-      <p class="mt-4 text-center text-sm text-gray-600">
+      <p class="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
         Nog geen account?
-        <a routerLink="/register" class="text-blue-600 hover:underline font-medium">Registreren</a>
+        <a routerLink="/register" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">Registreren</a>
       </p>
 
       <!-- Link to forgot password -->
-      <p class="mt-2 text-center text-sm text-gray-600">
-        <a routerLink="/forgot-password" class="text-blue-600 hover:underline">Wachtwoord vergeten?</a>
+      <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+        <a routerLink="/forgot-password" class="text-blue-600 dark:text-blue-400 hover:underline">Wachtwoord vergeten?</a>
       </p>
 
     </form>
