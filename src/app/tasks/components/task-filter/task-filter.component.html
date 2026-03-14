@@ -1,0 +1,65 @@
+<div class="flex flex-col gap-3 px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+
+  <!-- Search bar -->
+  <div class="relative">
+    <svg
+      class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      aria-hidden="true"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+    </svg>
+    <input
+      type="search"
+      data-testid="task-search-input"
+      aria-label="Search tasks"
+      placeholder="Search tasks…"
+      [value]="filterState().search"
+      (input)="onSearchChange($any($event.target).value)"
+      class="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  <!-- Filter and sort controls -->
+  <div class="flex flex-wrap items-center gap-2">
+
+    <!-- Status filter -->
+    <div class="flex items-center gap-1 flex-wrap" role="group" aria-label="Filter by status">
+      <button
+        *ngFor="let option of statusOptions"
+        type="button"
+        [attr.data-testid]="'status-filter-' + option"
+        [attr.aria-pressed]="filterState().status === option"
+        (click)="onStatusChange(option)"
+        [class]="
+          filterState().status === option
+            ? 'px-3 py-1 text-xs font-medium rounded-full bg-blue-600 text-white'
+            : 'px-3 py-1 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors'
+        "
+      >
+        {{ option }}
+      </button>
+    </div>
+
+    <!-- Sort selector -->
+    <div class="ml-auto flex items-center gap-2">
+      <label for="task-sort-select" class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+        Sort by
+      </label>
+      <select
+        id="task-sort-select"
+        data-testid="task-sort-select"
+        [value]="filterState().sort"
+        (change)="onSortChange($any($event.target).value)"
+        class="text-xs rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        aria-label="Sort tasks"
+      >
+        <option *ngFor="let option of sortOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+
+  </div>
+</div>
