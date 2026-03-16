@@ -1,11 +1,10 @@
 import { Component, inject, ChangeDetectionStrategy, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { OfflineService } from '../offline/offline.service';
 
 @Component({
   selector: 'app-offline-banner',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (!isOnline()) {

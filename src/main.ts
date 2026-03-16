@@ -1,4 +1,5 @@
 import { bootstrapApplication } from '@angular/platform-browser';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
@@ -10,6 +11,7 @@ import { appConfig } from './app/shared/config/app.config';
 
 bootstrapApplication(AppComponent, {
   providers: [
+    provideAnimationsAsync(),
     provideRouter(routes),
     provideHttpClient(),
     provideServiceWorker(appConfig.serviceWorker.scriptUrl, {

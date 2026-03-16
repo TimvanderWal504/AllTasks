@@ -1,16 +1,29 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { BreakpointService } from '../breakpoint/breakpoint.service';
 import { OfflineBannerComponent } from '../../pwa/offline-banner/offline-banner.component';
 import { ThemeToggleComponent } from '../theme/theme-toggle.component';
+import { InstallPromptComponent } from '../../pwa/install-prompt/install-prompt.component';
+import { ListSidebarComponent } from '../../lists/components/list-sidebar/list-sidebar.component';
+import { ListFormDialogComponent } from '../../lists/components/list-form-dialog/list-form-dialog.component';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, OfflineBannerComponent, ThemeToggleComponent],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    OfflineBannerComponent,
+    ThemeToggleComponent,
+    InstallPromptComponent,
+    ListSidebarComponent,
+    ListFormDialogComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-offline-banner />
+    <app-install-prompt />
 
     <div class="flex h-screen flex-col">
       @if (isMobile()) {
@@ -33,6 +46,7 @@ import { ThemeToggleComponent } from '../theme/theme-toggle.component';
             <div class="flex flex-col flex-1 overflow-y-auto p-4 gap-2">
               <a
                 routerLink="/tasks"
+                routerLinkActive="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
                 class="flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                 aria-label="Taken"
               >
@@ -41,6 +55,7 @@ import { ThemeToggleComponent } from '../theme/theme-toggle.component';
               </a>
               <a
                 routerLink="/lists"
+                routerLinkActive="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
                 class="flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                 aria-label="Lijsten"
               >
@@ -49,12 +64,18 @@ import { ThemeToggleComponent } from '../theme/theme-toggle.component';
               </a>
               <a
                 routerLink="/settings"
+                routerLinkActive="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
                 class="flex items-center gap-3 min-h-[44px] px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                 aria-label="Instellingen"
               >
                 <span aria-hidden="true">&#9881;</span>
                 <span>Instellingen</span>
               </a>
+
+              <div class="border-t border-gray-200 dark:border-gray-700 pt-2 mt-2">
+                <app-list-sidebar (createListRequested)="openCreateDialog()" />
+              </div>
+
               <div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                 <app-theme-toggle data-testid="theme-toggle-desktop" />
               </div>
@@ -75,6 +96,7 @@ import { ThemeToggleComponent } from '../theme/theme-toggle.component';
         >
           <a
             routerLink="/tasks"
+            routerLinkActive="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
             class="flex flex-col items-center justify-center min-h-[44px] min-w-[44px] flex-1 py-2 text-xs text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
             aria-label="Taken"
           >
@@ -83,6 +105,7 @@ import { ThemeToggleComponent } from '../theme/theme-toggle.component';
           </a>
           <a
             routerLink="/lists"
+            routerLinkActive="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
             class="flex flex-col items-center justify-center min-h-[44px] min-w-[44px] flex-1 py-2 text-xs text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
             aria-label="Lijsten"
           >
@@ -91,6 +114,7 @@ import { ThemeToggleComponent } from '../theme/theme-toggle.component';
           </a>
           <a
             routerLink="/settings"
+            routerLinkActive="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
             class="flex flex-col items-center justify-center min-h-[44px] min-w-[44px] flex-1 py-2 text-xs text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
             aria-label="Instellingen"
           >
@@ -100,10 +124,16 @@ import { ThemeToggleComponent } from '../theme/theme-toggle.component';
         </nav>
       }
     </div>
+
+    @if (isDialogOpen()) {
+      <app-list-form-dialog (closed)="closeDialog()" />
+    }
   `,
 })
 export class AppLayoutComponent {
   private readonly breakpointService = inject(BreakpointService);
+
+  protected readonly isDialogOpen = signal(false);
 
   isMobile(): boolean {
     return this.breakpointService.isMobile();
@@ -111,5 +141,13 @@ export class AppLayoutComponent {
 
   isDesktop(): boolean {
     return this.breakpointService.isDesktop();
+  }
+
+  openCreateDialog(): void {
+    this.isDialogOpen.set(true);
+  }
+
+  closeDialog(): void {
+    this.isDialogOpen.set(false);
   }
 }
