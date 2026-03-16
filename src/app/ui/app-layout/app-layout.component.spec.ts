@@ -1,8 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { By } from '@angular/platform-browser';
+import { signal } from '@angular/core';
 import { AppLayoutComponent } from './app-layout.component';
 import { BreakpointService } from '../breakpoint/breakpoint.service';
+import { ListService } from '../../lists/services/list.service';
 
 describe('AppLayoutComponent', () => {
   let fixture: ComponentFixture<AppLayoutComponent>;
@@ -13,11 +17,20 @@ describe('AppLayoutComponent', () => {
       isDesktop: () => isDesktop,
     };
 
+    const listServiceStub = jasmine.createSpyObj(
+      'ListService',
+      ['createList', 'renameList', 'deleteList', 'setActiveList'],
+      { lists: signal([]), activeList: signal(null) }
+    );
+
     TestBed.configureTestingModule({
       imports: [AppLayoutComponent],
       providers: [
         provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: BreakpointService, useValue: breakpointServiceStub },
+        { provide: ListService, useValue: listServiceStub },
       ],
     });
 
